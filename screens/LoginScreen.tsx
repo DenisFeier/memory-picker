@@ -11,11 +11,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomTextInput from '../components/CustomTextInput';
 import CustomButton from '../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { AppNavigatorProps } from '../router/AppNavigatorProps';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<AppNavigatorProps, 'Login'>>();
 
   const handleLogin = async () => {
     const normalizedEmail = email.toLowerCase().trim();
