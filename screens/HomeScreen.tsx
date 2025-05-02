@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { View, FlatList, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import axios from 'axios';
 import ScreenWrapper from '../components/ScreenWrapper';
+import { axiosInstance } from '../util/requests';
 
-const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJQTE0iLCJlbWFpbCI6InRlc3QxQG1haWxpbmF0b3IuY29tIiwiaWF0IjoxNzQ2MTc2NTc2LCJleHAiOjE3NDYyMTk3NzZ9.zgvpZ9HoCDzT0iOk30K71Iud0Jz4z53F3pTbrAuYOWw"
 
 export default function HomeScreen() {
   const [posts, setPosts] = useState([]);
@@ -12,11 +11,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      axios.get('http://127.0.0.1:3000/api/post/12?page=1&limit=3&order=desc', {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        }                
-      })
+      axiosInstance.get('/post/12?page=1&limit=3&order=desc')
       .then(response => {
         console.log(response.data)
         setPosts(response.data.posts);
