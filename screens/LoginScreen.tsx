@@ -13,6 +13,14 @@ import CustomButton from '../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AppNavigatorProps } from '../router/AppNavigatorProps';
+import axios from 'axios';
+import { JWT_TOKEN } from '../util/Constants';
+
+interface LoginResponse {
+  message: string;
+  token: string;
+}
+
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -27,7 +35,21 @@ const LoginScreen = () => {
       return;
     }
 
-   
+    const data = {
+      email: normalizedEmail,
+      password,
+    };
+
+    try {
+      const response = await axios.post<LoginResponse>('http://127.0.0.1:3000/api/user/login', data);
+      const token = response.data.token; 
+      console.log(token);
+      await AsyncStorage.setItem(JWT_TOKEN, token);
+    }
+    catch(error) {
+      console.log(JSON.stringify(error));
+    }
+  
   }
 
   return (
