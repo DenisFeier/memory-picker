@@ -6,34 +6,51 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomTextInput from '../components/CustomTextInput';
 import CustomButton from '../components/CustomButton';
+import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { AppNavigatorProps } from '../router/AppNavigatorProps';
+import { API_URL } from '../util/Constants';
 
 const ResetPasswordScreen = () => {
   const [email, setEmail] = useState('');
+  const navigation = useNavigation<StackNavigationProp<AppNavigatorProps, 'ResetPassword'>>();
+
+  const isValidEmail = (email: string): boolean =>
+    /^\S+@\S+\.\S+$/.test(email);
 
   const handleReset = async () => {
-    const normalizedEmail = email.toLowerCase().trim();
+    const normalizedEmail = email.trim().toLowerCase();
 
     if (!normalizedEmail) {
       Alert.alert('Error', 'Please enter your email.');
       return;
     }
 
+    if (!isValidEmail(normalizedEmail)) {
+      Alert.alert('Error', 'Invalid email format.');
+      return;
+    }
+
     try {
-      const key = `user_${normalizedEmail}`;
-      const userData = await AsyncStorage.getItem(key);
+      const response = await axios.post(`${API_URL}/api/user/reset-password`, {
+        email: normalizedEmail,
+      });
 
-      if (!userData) {
-        Alert.alert('Error', 'No account found with this email.');
-        return;
-      }
-
-      // Simulare trimitere email
-      Alert.alert('Email Sent', `Password reset link sent to ${normalizedEmail}`);
-    } catch (error) {
-      Alert.alert('Error', 'Something went wrong while checking your account.');
+      Alert.alert('Success', response.data.message || 'Reset email sent.', [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate('Login'),
+        },
+      ]);
+    } catch (error: any) {
+      console.error('Reset error:', error?.response?.data || error);
+      Alert.alert(
+        'Error',
+        error?.response?.data?.message || 'Failed to send reset email.'
+      );
     }
   };
 

@@ -15,6 +15,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { AppNavigatorProps } from '../router/AppNavigatorProps';
 import axios from 'axios';
 import { JWT_TOKEN } from '../util/Constants';
+import { API_URL } from '../util/Constants';
 
 interface LoginResponse {
   message: string;
@@ -41,7 +42,7 @@ const LoginScreen = () => {
     };
 
     try {
-      const response = await axios.post<LoginResponse>('http://127.0.0.1:3000/api/user/login', data);
+      const response = await axios.post<LoginResponse>(`${API_URL}/api/user/login`, data);
       const token = response.data.token; 
       console.log(token);
       await AsyncStorage.setItem(JWT_TOKEN, token);

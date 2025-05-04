@@ -6,9 +6,22 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomTextInput from '../components/CustomTextInput';
 import CustomButton from '../components/CustomButton';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { AppNavigatorProps } from '../router/AppNavigatorProps';
+import axios from 'axios';
+import { API_URL } from '../util/Constants';
+
+interface RegisterResponse {
+  message: string;
+  user: {
+    id: number;
+    username: string;
+    email: string;
+  };
+}
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState('');
@@ -16,9 +29,10 @@ const RegisterScreen = () => {
   const [password, setPassword] = useState('');
   const [rePassword, setRePassword] = useState('');
 
-  const isValidEmail = (email) => {
-    return /^\S+@\S+\.\S+$/.test(email);
-  };
+  const navigation = useNavigation<StackNavigationProp<AppNavigatorProps, 'Register'>>();
+
+  const isValidEmail = (email: string): boolean =>
+    /^\S+@\S+\.\S+$/.test(email);
 
   const handleRegister = async () => {
     const normalizedEmail = email.toLowerCase().trim();
@@ -38,29 +52,27 @@ const RegisterScreen = () => {
       return;
     }
 
+    const data = {
+      username,
+      password,
+      email: normalizedEmail,
+    };
+
     try {
-      const key = `user_${normalizedEmail}`;
-      const existingUser = await AsyncStorage.getItem(key);
-
-      if (existingUser) {
-        Alert.alert('Error', 'This email is already registered.');
-        return;
-      }
-
-      await AsyncStorage.setItem(
-        key,
-        JSON.stringify({ username, password })
+      const response = await axios.post<RegisterResponse>(
+        `${API_URL}/api/user/register`, 
+        data
       );
 
-      Alert.alert('Account created!', `Welcome, ${username}!`);
-
-      // Clear form
-      setEmail('');
-      setUsername('');
-      setPassword('');
-      setRePassword('');
-    } catch (error) {
-      Alert.alert('Error', 'Failed to save user data.');
+      Alert.alert('Success', response.data.message, [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate('Login'),
+        },
+      ]);
+    } catch (error: any) {
+      console.error('Registration error:', error?.response?.data || error);
+      Alert.alert('Error', error?.response?.data?.message || 'Registration failed.');
     }
   };
 
