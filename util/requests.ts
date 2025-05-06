@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInVzZXJuYW1lIjoib3JpY2VlIiwiZW1haWwiOiJvcmljZWVAbWFpbGluYXRvci5jb20iLCJpYXQiOjE3NDY1MTM2NzEsImV4cCI6MTc0NjU1Njg3MX0.ujk1FQqpqJAX2-tijI8939pn86SsQ1gfATJBtrIEh9E"
+const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJQTE0iLCJlbWFpbCI6InRlc3QxQG1haWxpbmF0b3IuY29tIiwiaWF0IjoxNzQ2NTM3MjczLCJleHAiOjE3NDY1ODA0NzN9.n7OuTW5GINQpHZM7qV7Bzzb6lpjz4U6-OGy8-0grBYY"
 
 export const axiosInstance = axios.create({
-  baseURL: 'http://192.168.63.104:3000/api'
+  baseURL: 'http://localhost:3000/api'
 });
 
 axiosInstance.interceptors.request.use(

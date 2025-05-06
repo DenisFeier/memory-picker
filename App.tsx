@@ -1,15 +1,26 @@
-import { useEffect, useState } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import TabBar from './TabBar';
 
-function Container() {
+import TabBar from './router/TabBar';
+import LoginRegisterStack from './router/LoginRegisterStack';
+
+function LoginRegisterContainer() {
   return (
-    <NavigationContainer>
+    <LoginRegisterStack />
+  );
+}
+
+
+function TabContainer() {
+  return (
       <TabBar />
-    </NavigationContainer>
   );
 }
 
 export default function App() {
-  return <Container />;
+  return (
+    <NavigationContainer>
+      <LoginRegisterContainer />
+    </NavigationContainer>
+  )
 }

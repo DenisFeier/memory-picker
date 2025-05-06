@@ -1,10 +1,10 @@
-import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import HomeScreen from '../screens/HomeScreen';
-import CameraScreen from '../screens/CameraScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import FindPeopleScreen from '../screens/FindPeopleScreen';
+
+import HomeScreen from '../../screens/HomeScreen';
+import CameraScreen from '../../screens/CameraScreen';
+import ProfileScreen from '../../screens/ProfileScreen';
+import FindPeopleScreen from '../../screens/FindPeopleScreen';
 import { TabBarParams } from './params';
 
 const Tab = createBottomTabNavigator<TabBarParams>();
