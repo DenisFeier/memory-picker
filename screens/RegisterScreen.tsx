@@ -10,7 +10,7 @@ import CustomTextInput from '../components/CustomTextInput';
 import CustomButton from '../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { AppNavigatorProps } from '../router/AppNavigatorProps';
+import { AppNavigatorProps } from '../router/LoginRegisterStack/LoginRegisterStackProps';
 import axios from 'axios';
 import { API_URL } from '../util/Constants';
 

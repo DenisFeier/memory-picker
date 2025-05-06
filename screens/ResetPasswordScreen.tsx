@@ -11,7 +11,7 @@ import CustomButton from '../components/CustomButton';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { AppNavigatorProps } from '../router/AppNavigatorProps';
+import { AppNavigatorProps } from '../router/LoginRegisterStack/LoginRegisterStackProps';
 import { API_URL } from '../util/Constants';
 
 const ResetPasswordScreen = () => {
