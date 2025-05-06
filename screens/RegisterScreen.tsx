@@ -6,13 +6,15 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import CustomTextInput from '../components/CustomTextInput';
-import CustomButton from '../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { AppNavigatorProps } from '../router/LoginRegisterStack/LoginRegisterStackProps';
 import axios from 'axios';
+
+
+import CustomTextInput from '../components/CustomTextInput';
+import CustomButton from '../components/CustomButton';
 import { API_URL } from '../util/Constants';
+import { LoginRegisterStackProps } from '../router/LoginRegisterStack/LoginRegisterStackProps';
 
 interface RegisterResponse {
   message: string;
@@ -29,7 +31,7 @@ const RegisterScreen = () => {
   const [password, setPassword] = useState('');
   const [rePassword, setRePassword] = useState('');
 
-  const navigation = useNavigation<StackNavigationProp<AppNavigatorProps, 'Register'>>();
+  const navigation = useNavigation<StackNavigationProp<LoginRegisterStackProps, 'Register'>>();
 
   const isValidEmail = (email: string): boolean =>
     /^\S+@\S+\.\S+$/.test(email);

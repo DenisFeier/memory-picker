@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   View,
   Text,
@@ -8,14 +8,17 @@ import {
   Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CustomTextInput from '../components/CustomTextInput';
-import CustomButton from '../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { AppNavigatorProps } from '../router/LoginRegisterStack/LoginRegisterStackProps';
 import axios from 'axios';
-import { JWT_TOKEN } from '../util/Constants';
-import { API_URL } from '../util/Constants';
+
+import CustomTextInput from '../components/CustomTextInput';
+import CustomButton from '../components/CustomButton';
+import { API_URL, JWT_TOKEN } from '../util/Constants';
+import { LoginRegisterStackProps } from '../router/LoginRegisterStack/LoginRegisterStackProps';
+import { AuthContext } from '../context/AuthContext';
+
+
 
 interface LoginResponse {
   message: string;
@@ -26,7 +29,9 @@ interface LoginResponse {
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation<StackNavigationProp<AppNavigatorProps, 'Login'>>();
+  const navigation = useNavigation<StackNavigationProp<LoginRegisterStackProps, 'Login'>>();
+  const { setAuth } = useContext(AuthContext);
+  
 
   const handleLogin = async () => {
     const normalizedEmail = email.toLowerCase().trim();
@@ -42,10 +47,11 @@ const LoginScreen = () => {
     };
 
     try {
-      const response = await axios.post<LoginResponse>(`${API_URL}/api/user/login`, data);
+      const response = await axios.post<LoginResponse>(`${API_URL}/user/login`, data);
       const token = response.data.token; 
       console.log(token);
       await AsyncStorage.setItem(JWT_TOKEN, token);
+      setAuth(true);
     }
     catch(error) {
       console.log(JSON.stringify(error));
