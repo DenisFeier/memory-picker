@@ -1,25 +1,17 @@
 import { useState, useEffect } from 'react';
-import { View, TextInput, FlatList, Text, StyleSheet, TouchableOpacity  } from 'react-native';
+import { View, TextInput, FlatList, Text, StyleSheet, TouchableOpacity, Image, Platform } from 'react-native';
 import axios from 'axios';
 import ScreenWrapper from '../components/ScreenWrapper';
-
-const API_URL = 'http://192.168.63.104:3000/api/user/public-users';
-const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsInVzZXJuYW1lIjoib3JpY2VlIiwiZW1haWwiOiJvcmljZWVAbWFpbGluYXRvci5jb20iLCJpYXQiOjE3NDYxNjg4NTQsImV4cCI6MTc0NjIxMjA1NH0.3xf5wUTjQ2vh-14zwiJZsxpfeA9xIuEWwXyCjxoLuUU';
+import { axiosInstance } from '../util/requests';
 
 export default function FindPeopleScreen() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
 
   const performSearch = async (text: string) => {
-    setQuery(text);
-
     try {
-      const response = await axios.get(`${API_URL}?page=1&limit=3&search=${text}`, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
-      setResults(response.data);
+      const response = await axiosInstance.get(`/user/public-users?page=1&limit=3&search=${text}`);
+      setResults(response.data.users);
     } catch (error) {
       console.error('Search error:', error);
     }
@@ -36,7 +28,7 @@ export default function FindPeopleScreen() {
             value={query}
             onChangeText={setQuery}
           />
-          <TouchableOpacity style={styles.searchButton} onPress={performSearch}>
+          <TouchableOpacity style={styles.searchButton} onPress={() => performSearch(query)}>
             <Text style={styles.searchButtonText}>Search</Text>
           </TouchableOpacity>
         </View>
@@ -44,8 +36,20 @@ export default function FindPeopleScreen() {
           data={results}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <View style={styles.resultItem}>
-              <Text>{item.name}</Text>
+            <View style={styles.cardWrapper}>
+              <View style={styles.card}>
+                <View style={styles.profileInfo}>
+                  <Image
+                    source={
+                      item.profile_picture
+                        ? { uri: item.profile_picture }
+                        : require('../assets/profile.png')
+                    }
+                    style={styles.profileImage}
+                  />
+                  <Text style={styles.username}>{item.username}</Text>
+                </View>
+              </View>
             </View>
           )}
         />
@@ -87,5 +91,35 @@ const styles = StyleSheet.create({
     padding: 12,
     borderBottomWidth: 1,
     borderColor: '#eee',
+  },
+  cardWrapper: {
+    borderRadius: 12,
+    marginBottom: 12,
+    backgroundColor: '#e8e2d9',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    overflow: Platform.OS === 'android' ? 'hidden' : 'visible',
+  },
+  card: {
+    borderRadius: 12,
+    padding: 16,
+  },
+  profileInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 12,
+    backgroundColor: '#ccc',
+  },
+  username: {
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
