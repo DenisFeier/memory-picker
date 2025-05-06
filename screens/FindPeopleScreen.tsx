@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { View, TextInput, FlatList, Text, StyleSheet, TouchableOpacity, Image, Platform } from 'react-native';
-import axios from 'axios';
+
 import ScreenWrapper from '../components/ScreenWrapper';
 import { axiosInstance } from '../util/requests';
 
