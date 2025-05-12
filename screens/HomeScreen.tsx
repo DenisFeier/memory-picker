@@ -8,6 +8,10 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { axiosInstance } from '../util/requests';
 import { HomeStackParams } from '../router/HomeStack/params';
+import { JWT_TOKEN } from '../util/Constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from 'jwt-decode';
+import { DecodedToken } from '../types/DecodedToken';
 
 export default function HomeScreen() {
   const [posts, setPosts] = useState([]);
@@ -16,9 +20,16 @@ export default function HomeScreen() {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      axiosInstance.get('/post/12?page=1&limit=3&order=desc')
+      const token = await AsyncStorage.getItem(JWT_TOKEN);
+      if (!token) {
+        return;
+      }
+      const decoded = jwtDecode<DecodedToken>(token);
+      console.log(decoded);
+      const userId = decoded.id;
+      axiosInstance.get(`/post/${userId}}?page=1&limit=3&order=desc`)
       .then(response => {
-        console.log(response.data)
+        console.log(response.data.posts)
         setPosts(response.data.posts);
       })
       .catch(error => {
@@ -65,5 +76,6 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width / 2 - 30,
     height: 200,
     resizeMode: 'cover',
+    backgroundColor: '#FCEED8',
   },
 });

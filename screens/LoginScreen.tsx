@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   View,
   Text,
@@ -11,10 +11,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import axios from 'axios';
-
+import { JWT_TOKEN } from '../util/Constants';
+import { API_URL } from '../util/Constants';
 import CustomButton from '../components/CustomButton';
 import CustomTextInput from '../components/CustomTextInput';
-import { API_URL, JWT_TOKEN } from '../util/Constants';
+import { AuthContext } from '../context/AuthContext';
 import { LoginRegisterStackProps } from '../router/LoginRegisterStack/LoginRegisterStackProps';
 
 interface LoginResponse {
@@ -27,6 +28,8 @@ const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation<StackNavigationProp<LoginRegisterStackProps, 'Login'>>();
+  const { setAuth } = useContext(AuthContext);
+  
 
   const handleLogin = async () => {
     const normalizedEmail = email.toLowerCase().trim();
@@ -46,6 +49,7 @@ const LoginScreen = () => {
       const token = response.data.token; 
       console.log(token);
       await AsyncStorage.setItem(JWT_TOKEN, token);
+      setAuth(true);
     }
     catch(error) {
       console.log(JSON.stringify(error));

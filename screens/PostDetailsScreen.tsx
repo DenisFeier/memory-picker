@@ -4,9 +4,13 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 
-import type { HomeStackParams } from '../navigation/HomeStack/params';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { axiosInstance } from '../util/requests';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from 'jwt-decode';
+import { DecodedToken } from '../types/DecodedToken';
+import { JWT_TOKEN } from '../util/Constants';
+import { HomeStackParams } from '../router/HomeStack/params';
 
 type PostDetailsRouteProp = RouteProp<HomeStackParams, 'PostDetails'>;
 type NavigationProp = NativeStackNavigationProp<HomeStackParams>;
@@ -24,14 +28,15 @@ export default function PostDetailsScreen() {
   useEffect(() => {
   const fetchPost = async () => {
     try {
-      const userId = 12; // or get dynamically if needed
-      const response = await axiosInstance.get(`/post/${userId}?page=1&limit=20&order=desc`);
-      const found = response.data.posts.find((p) => p.id === postId);
-      if (found) {
-        setPost(found);
-      } else {
-        console.warn('Post not found');
+      const token = await AsyncStorage.getItem(JWT_TOKEN);
+      if (!token) {
+        return;
       }
+      const decoded = jwtDecode<DecodedToken>(token);
+      const userId = decoded.id;
+      const response = await axiosInstance.get(`/post/${userId}?page=1&limit=20&order=desc`);
+      setPost(response.data.posts);
+
     } catch (error) {
       console.error('Error fetching post list:', error);
     }

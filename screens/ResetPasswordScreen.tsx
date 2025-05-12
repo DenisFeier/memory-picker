@@ -6,11 +6,12 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
-import CustomTextInput from '../components/CustomTextInput';
-import CustomButton from '../components/CustomButton';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+
+import CustomTextInput from '../components/CustomTextInput';
+import CustomButton from '../components/CustomButton';
 import { API_URL } from '../util/Constants';
 import { LoginRegisterStackProps } from '../router/LoginRegisterStack/LoginRegisterStackProps';
 
@@ -35,7 +36,7 @@ const ResetPasswordScreen = () => {
     }
 
     try {
-      const response = await axios.post(`${API_URL}/api/user/reset-password`, {
+      const response = await axios.post(`${API_URL}/user/reset-password`, {
         email: normalizedEmail,
       });
 
