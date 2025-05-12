@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
 import { View, FlatList, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+import type { HomeStackParams } from '../navigation/HomeStack/params';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { axiosInstance } from '../util/requests';
-
 
 export default function HomeScreen() {
   const [posts, setPosts] = useState([]);
   const [numColumns] = useState(2);
+  const navigation = useNavigation<NativeStackNavigationProp<HomeStackParams>>();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -24,8 +28,10 @@ export default function HomeScreen() {
   }, [setPosts]);
 
   const renderItem = ({ item }) => (
-    console.log(item.picture),
-    <TouchableOpacity style={styles.imageContainer} onPress={() => console.log('To the post', item.id)}>
+    <TouchableOpacity
+      style={styles.imageContainer}
+      onPress={() => navigation.navigate('PostDetails', { postId: item.id })}
+    >
       <Image source={{ uri: item.picture }} style={styles.image} />
     </TouchableOpacity>
   );
