@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   View,
   TextInput,
@@ -27,15 +27,48 @@ type NavigationProp = StackNavigationProp<FindPeopleParamList, 'FindPeopleScreen
 export default function FindPeopleScreen() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<PublicUser[]>([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   const navigation = useNavigation<NavigationProp>();
 
-  const performSearch = async (text: string) => {
+  const fetchUsers = async (pageNumber: number, searchQuery: string) => {
+    if (loading || !hasMore) return;
+
+    setLoading(true);
     try {
-      const response = await axiosInstance.get(`/user/public-users?page=1&limit=20&search=${text}`);
-      setResults(response.data.users);
+      const response = await axiosInstance.get(
+        `/user/public-users?page=${pageNumber}&limit=10&search=${searchQuery}`
+      );
+
+      const newUsers = response.data.users;
+
+      if (newUsers.length > 0) {
+        setResults((prevResults) => [...prevResults, ...newUsers]);
+        setPage(pageNumber);
+      } else {
+        setHasMore(false); // No more data to fetch
+      }
     } catch (error) {
-      console.error('Search error:', error);
+      console.error('Error fetching users:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Reset results and fetch the first page when the query changes
+    setResults([]);
+    setPage(1);
+    setHasMore(true);
+    fetchUsers(1, query);
+  }, [query]);
+
+  const loadMore = () => {
+    console.log('Loading more users...');
+    if (!loading && hasMore) {
+      fetchUsers(page + 1, query);
     }
   };
 
@@ -54,9 +87,6 @@ export default function FindPeopleScreen() {
             value={query}
             onChangeText={setQuery}
           />
-          <TouchableOpacity style={styles.searchButton} onPress={() => performSearch(query)}>
-            <Text style={styles.searchButtonText}>Search</Text>
-          </TouchableOpacity>
         </View>
 
         <FlatList
@@ -79,12 +109,14 @@ export default function FindPeopleScreen() {
               </View>
             </TouchableOpacity>
           )}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={loading ? <Text style={{ textAlign: 'center' }}>Loading...</Text> : null}
         />
       </View>
     </ScreenWrapper>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     padding: 16,
