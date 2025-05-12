@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,13 +9,12 @@ import {
   SafeAreaView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-import { CommonActions } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { TabBarParams } from '../router/TabBar/params';
 import { JWT_TOKEN } from '../util/Constants';
 import { axiosInstance } from '../util/requests';
+import { AuthContext } from '../context/AuthContext';
 
 interface UserResponse {
   id: number;
@@ -27,8 +26,8 @@ interface UserResponse {
 
 const ProfileScreen = () => {
   const [user, setUser] = useState<UserResponse | null>(null);
-  const navigation = useNavigation<StackNavigationProp<TabBarParams, 'Profile'>>();
-
+  const { setAuth } = useContext(AuthContext);
+    
   useEffect(() => {
     const fetchUser = async () => {
 
@@ -45,12 +44,7 @@ const ProfileScreen = () => {
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem(JWT_TOKEN);
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: 'Login' }],
-      })
-    );
+    setAuth(false);
   };
 
   if (!user) return null;
@@ -72,6 +66,7 @@ const ProfileScreen = () => {
           <Text style={styles.switchLabel}>Public Account</Text>
           <Switch
             value={user.is_public}
+  
             disabled
             thumbColor={user.is_public ? '#f4a261' : '#ccc'}
             trackColor={{ false: '#ccc', true: '#ffe0b2' }}
@@ -144,3 +139,4 @@ const styles = StyleSheet.create({
 });
 
 export default ProfileScreen;
+
