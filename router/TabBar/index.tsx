@@ -3,9 +3,10 @@ import { Ionicons } from '@expo/vector-icons';
 
 import HomeStack from '../HomeStack';
 import CameraScreen from '../../screens/CameraScreen';
-import ProfileScreen from '../../screens/ProfileScreen';
-import FindPeopleScreen from '../../screens/FindPeopleScreen';
-import { TabBarParams } from './params';
+import ProfileScreen from '../../screens/ProfilePageScreen';
+import { TabBarParams } from './params';  
+import FindPeopleStack from '../FindPeopleStack';
+
 
 const Tab = createBottomTabNavigator<TabBarParams>();
 
@@ -56,7 +57,7 @@ export default function TabBar() {
       />
       <Tab.Screen
         name="Find People"
-        component={FindPeopleScreen}
+        component={FindPeopleStack}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="people-outline" size={size} color={color} />
