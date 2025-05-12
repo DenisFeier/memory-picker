@@ -6,10 +6,8 @@ import {
   Image,
   Switch,
   TouchableOpacity,
-  SafeAreaView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { TabBarParams } from '../router/TabBar/params';
 import { JWT_TOKEN } from '../util/Constants';
@@ -26,14 +24,15 @@ interface UserResponse {
 
 const ProfileScreen = () => {
   const [user, setUser] = useState<UserResponse | null>(null);
+  const [isPublic, setIsPublic] = useState(false);
   const { setAuth } = useContext(AuthContext);
-    
+
   useEffect(() => {
     const fetchUser = async () => {
-
       try {
-        const response = await axiosInstance.get<UserResponse>('/user/me'); 
+        const response = await axiosInstance.get<UserResponse>('/user/me');
         setUser(response.data);
+        setIsPublic(response.data.is_public);
       } catch (error) {
         console.error('Failed to fetch user profile:', error);
       }
@@ -41,6 +40,17 @@ const ProfileScreen = () => {
 
     fetchUser();
   }, []);
+
+  const handleTogglePublic = async () => {
+    const newStatus = !isPublic;
+    setIsPublic(newStatus);
+
+    try {
+      await axiosInstance.patch('/user/update', { is_public: newStatus });
+    } catch (error) {
+      console.error('Failed to update public status:', error);
+    }
+  };
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem(JWT_TOKEN);
@@ -50,25 +60,21 @@ const ProfileScreen = () => {
   if (!user) return null;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.usernameHeader}>{user.username}</Text>
       </View>
 
       <View style={styles.profileBox}>
-        <Image
-          source={{ uri: user.profile_picture }}
-          style={styles.avatar}
-        />
+        <Image source={{ uri: user.profile_picture }} style={styles.avatar} />
         <Text style={styles.email}>{user.email}</Text>
 
         <View style={styles.switchRow}>
           <Text style={styles.switchLabel}>Public Account</Text>
           <Switch
-            value={user.is_public}
-  
-            disabled
-            thumbColor={user.is_public ? '#f4a261' : '#ccc'}
+            value={isPublic}
+            onValueChange={handleTogglePublic}
+            thumbColor={isPublic ? '#f4a261' : '#ccc'}
             trackColor={{ false: '#ccc', true: '#ffe0b2' }}
           />
         </View>
@@ -77,7 +83,7 @@ const ProfileScreen = () => {
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -139,4 +145,3 @@ const styles = StyleSheet.create({
 });
 
 export default ProfileScreen;
-
