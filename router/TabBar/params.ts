@@ -1,6 +1,6 @@
 export type TabBarParams = {
-  Home: undefined;
-  Camera: undefined;
-  Profile: undefined;
+  HomeStack: undefined;
+  CameraStack: undefined;
+  ProfileStack: undefined;
   'Find People': undefined;
 };

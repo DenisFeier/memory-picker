@@ -37,7 +37,7 @@ export default function TabBar() {
         }}
       />
       <Tab.Screen
-        name="Camera"
+        name="CameraStack"
         component={CameraScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -46,7 +46,7 @@ export default function TabBar() {
         }}
       />
       <Tab.Screen
-        name="Profile"
+        name="ProfileStack"
         component={ProfileScreen}
         options={{
           tabBarIcon: ({ color, size }) => (

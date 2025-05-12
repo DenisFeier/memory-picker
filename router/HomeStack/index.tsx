@@ -1,6 +1,6 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { HomeStackParamList } from './params';
+
 
 import HomeScreen from '../../screens/HomeScreen';
 import PostDetailsScreen from '../../screens/PostDetailsScreen';
@@ -9,6 +9,7 @@ import EditPostScreen from '../../screens/EditPostScreen';
 import ImageSelectLocationScreen from '../../screens/ImageSelectLocationScreen';
 import ChangeImageScreen from '../../screens/ChangeImageScreen';
 import ReadyToPostScreen from '../../screens/ReadyToPostScreen';
+import { HomeStackParams } from './params';
 
 const Stack = createNativeStackNavigator<HomeStackParams>();
 

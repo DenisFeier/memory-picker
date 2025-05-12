@@ -4,9 +4,10 @@ import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import type { HomeStackParams } from '../navigation/HomeStack/params';
+
 import ScreenWrapper from '../components/ScreenWrapper';
 import { axiosInstance } from '../util/requests';
+import { HomeStackParams } from '../router/HomeStack/params';
 
 export default function HomeScreen() {
   const [posts, setPosts] = useState([]);

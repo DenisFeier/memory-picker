@@ -11,12 +11,12 @@ import CustomButton from '../components/CustomButton';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { AppNavigatorProps } from '../router/LoginRegisterStack/LoginRegisterStackProps';
 import { API_URL } from '../util/Constants';
+import { LoginRegisterStackProps } from '../router/LoginRegisterStack/LoginRegisterStackProps';
 
 const ResetPasswordScreen = () => {
   const [email, setEmail] = useState('');
-  const navigation = useNavigation<StackNavigationProp<AppNavigatorProps, 'ResetPassword'>>();
+  const navigation = useNavigation<StackNavigationProp<LoginRegisterStackProps, 'ResetPassword'>>();
 
   const isValidEmail = (email: string): boolean =>
     /^\S+@\S+\.\S+$/.test(email);

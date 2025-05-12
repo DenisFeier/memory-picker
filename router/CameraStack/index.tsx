@@ -1,12 +1,12 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { CameraStackParamList } from './params';
 
 import CameraScreen from '../../screens/CameraScreen';
 import EditPostScreen from '../../screens/EditPostScreen';
 import ImageSelectLocationScreen from '../../screens/ImageSelectLocationScreen';
 import ChangeImageScreen from '../../screens/ChangeImageScreen';
 import ReadyToPostScreen from '../../screens/ReadyToPostScreen';
+import { CameraStackParams } from './params';
 
 const Stack = createNativeStackNavigator<CameraStackParams>();
 
