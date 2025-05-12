@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
-import HomeScreen from '../../screens/HomeScreen';
+import HomeStack from '../HomeStack';
 import CameraScreen from '../../screens/CameraScreen';
 import ProfileScreen from '../../screens/ProfilePageScreen';
 import { TabBarParams } from './params';  
@@ -14,7 +14,6 @@ export default function TabBar() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerShown: true,
         tabBarShowLabel: false,
         tabBarActiveTintColor: 'gray',
         tabBarInactiveTintColor: 'black',
@@ -26,32 +25,45 @@ export default function TabBar() {
           fontSize: 22,
           color: 'black',
         },
-        tabBarIcon: ({ color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap;
-          switch (route.name) {
-            case 'Home':
-              iconName = 'home-outline';
-              break;
-            case 'Camera':
-              iconName = 'camera-outline';
-              break;
-            case 'Profile':
-              iconName = 'person-outline';
-              break;
-            case 'Find People':
-              iconName = 'people-outline';
-              break;
-            default:
-              iconName = 'ellipse';
-          }
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Camera" component={CameraScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen name='Find People' component={FindPeopleStack} />
+      <Tab.Screen
+        name="HomeStack"
+        component={HomeStack}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="CameraStack"
+        component={CameraScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="camera-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="ProfileStack"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Find People"
+        component={FindPeopleStack}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="people-outline" size={size} color={color} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }

@@ -39,6 +39,6 @@ export default function ScreenWrapper({ children }: ScreenWrapperProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#932D0D40',
+    backgroundColor: '#932D0D20',
   },
 });
