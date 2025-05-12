@@ -8,7 +8,7 @@ import { View } from "react-native";
 import TabBar from "./router/TabBar";
 import LoginRegisterStack from "./router/LoginRegisterStack";
 import { JWT_TOKEN } from "./util/Constants";
-import { AuthContext, AuthProvider } from "./context/AuthContext";
+import { AuthContext } from "./context/AuthContext";
 
 SplashScreen.preventAutoHideAsync();
 
