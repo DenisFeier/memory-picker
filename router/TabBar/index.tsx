@@ -3,9 +3,10 @@ import { Ionicons } from '@expo/vector-icons';
 
 import HomeScreen from '../../screens/HomeScreen';
 import CameraScreen from '../../screens/CameraScreen';
-import ProfileScreen from '../../screens/ProfileScreen';
-import FindPeopleScreen from '../../screens/FindPeopleScreen';
-import { TabBarParams } from './params';
+import ProfileScreen from '../../screens/ProfilePageScreen';
+import { TabBarParams } from './params';  
+import FindPeopleStack from '../FindPeopleStack';
+
 
 const Tab = createBottomTabNavigator<TabBarParams>();
 
@@ -26,7 +27,7 @@ export default function TabBar() {
           color: 'black',
         },
         tabBarIcon: ({ color, size }) => {
-          let iconName: string;
+          let iconName: keyof typeof Ionicons.glyphMap;
           switch (route.name) {
             case 'Home':
               iconName = 'home-outline';
@@ -50,7 +51,7 @@ export default function TabBar() {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Camera" component={CameraScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen name="Find People" component={FindPeopleScreen} />
+      <Tab.Screen name='Find People' component={FindPeopleStack} />
     </Tab.Navigator>
   );
 }

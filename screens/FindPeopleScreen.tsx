@@ -1,20 +1,46 @@
-import { useState, useEffect } from 'react';
-import { View, TextInput, FlatList, Text, StyleSheet, TouchableOpacity, Image, Platform } from 'react-native';
+import { useState } from 'react';
+import {
+  View,
+  TextInput,
+  FlatList,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Platform,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 import ScreenWrapper from '../components/ScreenWrapper';
 import { axiosInstance } from '../util/requests';
+import { FindPeopleParamList } from '../router/FindPeopleStack/FindPeopleParams';
+
+type PublicUser = {
+  id: number;
+  username: string;
+  profile_picture?: string;
+};
+
+type NavigationProp = StackNavigationProp<FindPeopleParamList, 'FindPeopleScreen'>;
 
 export default function FindPeopleScreen() {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<PublicUser[]>([]);
+
+  const navigation = useNavigation<NavigationProp>();
 
   const performSearch = async (text: string) => {
     try {
-      const response = await axiosInstance.get(`/user/public-users?page=1&limit=3&search=${text}`);
+      const response = await axiosInstance.get(`/user/public-users?page=1&limit=20&search=${text}`);
       setResults(response.data.users);
     } catch (error) {
       console.error('Search error:', error);
     }
+  };
+
+  const handleUserPress = (userId: number) => {
+    navigation.navigate('SomebodyPage', { userId });
   };
 
   return (
@@ -32,11 +58,12 @@ export default function FindPeopleScreen() {
             <Text style={styles.searchButtonText}>Search</Text>
           </TouchableOpacity>
         </View>
+
         <FlatList
           data={results}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <View style={styles.cardWrapper}>
+            <TouchableOpacity onPress={() => handleUserPress(item.id)} style={styles.cardWrapper}>
               <View style={styles.card}>
                 <View style={styles.profileInfo}>
                   <Image
@@ -50,7 +77,7 @@ export default function FindPeopleScreen() {
                   <Text style={styles.username}>{item.username}</Text>
                 </View>
               </View>
-            </View>
+            </TouchableOpacity>
           )}
         />
       </View>
@@ -86,11 +113,6 @@ const styles = StyleSheet.create({
   searchButtonText: {
     fontSize: 20,
     fontWeight: 'bold',
-  },
-  resultItem: {
-    padding: 12,
-    borderBottomWidth: 1,
-    borderColor: '#eee',
   },
   cardWrapper: {
     borderRadius: 12,
