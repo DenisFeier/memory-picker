@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,13 +6,12 @@ import {
   Image,
   Switch,
   TouchableOpacity,
-} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { TabBarParams } from '../router/TabBar/params';
-import { JWT_TOKEN } from '../util/Constants';
-import { axiosInstance } from '../util/requests';
-import { AuthContext } from '../context/AuthContext';
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import { JWT_TOKEN } from "../util/Constants";
+import { axiosInstance } from "../util/requests";
+import { AuthContext } from "../context/AuthContext";
 
 interface UserResponse {
   id: number;
@@ -24,33 +23,36 @@ interface UserResponse {
 
 const ProfileScreen = () => {
   const [user, setUser] = useState<UserResponse | null>(null);
-  const [isPublic, setIsPublic] = useState(false);
+  const isPublic = user?.is_public || false;
   const { setAuth } = useContext(AuthContext);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axiosInstance.get<UserResponse>('/user/me');
-        setUser(response.data);
-        setIsPublic(response.data.is_public);
-      } catch (error) {
-        console.error('Failed to fetch user profile:', error);
-      }
-    };
+  const fetchUser = useCallback(async () => {
+    try {
+      const response = await axiosInstance.get<UserResponse>("/user/me");
+      setUser(response.data);
+    } catch (error) {
+      console.error("Failed to fetch user profile:", error);
+    }
+  }, [setUser]);
 
+  useEffect(() => {
     fetchUser();
-  }, []);
+  }, [fetchUser]);
 
   const handleTogglePublic = async () => {
     const newStatus = !isPublic;
-    setIsPublic(newStatus);
 
     try {
-      await axiosInstance.patch('/user/update', { is_public: newStatus });
+      await axiosInstance.post("/user/toggle-visibility", { isPublic: newStatus });
     } catch (error) {
-      console.error('Failed to update public status:', error);
+      console.error("Failed to update public status:", error);
     }
   };
+
+  const onTogglePublic = async () => {
+    await handleTogglePublic();
+    await fetchUser();
+  }
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem(JWT_TOKEN);
@@ -73,9 +75,9 @@ const ProfileScreen = () => {
           <Text style={styles.switchLabel}>Public Account</Text>
           <Switch
             value={isPublic}
-            onValueChange={handleTogglePublic}
-            thumbColor={isPublic ? '#f4a261' : '#ccc'}
-            trackColor={{ false: '#ccc', true: '#ffe0b2' }}
+            onValueChange={onTogglePublic}
+            thumbColor={isPublic ? "#f4a261" : "#ccc"}
+            trackColor={{ false: "#ccc", true: "#ffe0b2" }}
           />
         </View>
 
@@ -90,22 +92,22 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF3E0',
+    backgroundColor: "#FFF3E0",
   },
   header: {
     padding: 16,
-    backgroundColor: '#f4a261',
+    backgroundColor: "#f4a261",
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
   },
   usernameHeader: {
     fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
   },
   profileBox: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     paddingTop: 40,
   },
   avatar: {
@@ -116,30 +118,30 @@ const styles = StyleSheet.create({
   },
   email: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   switchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 30,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 12,
     borderRadius: 12,
   },
   switchLabel: {
     marginRight: 10,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   logoutButton: {
-    backgroundColor: 'red',
+    backgroundColor: "red",
     paddingVertical: 12,
     paddingHorizontal: 40,
     borderRadius: 30,
   },
   logoutText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontSize: 18,
   },
 });
